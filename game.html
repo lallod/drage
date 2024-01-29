@@ -5,27 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Arbeidskrav 1!</title>
   <link rel="stylesheet" href="game.css" />
+  <style>
+    .healthbar {
+      transition: width 0.5s ease-in-out;
+    }
+  </style>
 </head>
 <body>
   <div class="main-container">
     <!-- Healthbars til heroene -->
     <div class="hero-health-containers">
       <div class="healthbar-container" id="healer-container">
-        <div class="healthbar healer-health"></div>
+        <div class="healthbar healer-health" id="healer-healthbar"></div>
         <div class="text-container">
           <p id="healer-name-txt">PIPI</p>
           <p id="healer-health-txt">400 / 400 HP</p>
         </div>
       </div>
       <div class="healthbar-container" id="archer-container">
-        <div class="healthbar archer-health"></div>
+        <div class="healthbar archer-health" id="archer-healthbar"></div>
         <div class="text-container">
           <p id="archer-name-txt">LALA</p>
           <p id="archer-health-txt">600 / 600 HP</p>
         </div>
       </div>
       <div class="healthbar-container" id="warrior-container">
-        <div class="healthbar warrior-health"></div>
+        <div class="healthbar warrior-health" id="warrior-healthbar"></div>
         <div class="text-container">
           <p id="warrior-name-txt">LOLO</p>
           <p id="warrior-health-txt">800 / 800 HP</p>
@@ -36,7 +41,7 @@
     <!-- Healthbar til fienden -->
     <div class="dragon-health-container">
       <div class="healthbar-container">
-        <div class="healthbar dragon-health"></div>
+        <div class="healthbar dragon-health" id="dragon-healthbar"></div>
         <div class="text-container">
           <p id="dragon-name-txt">FOFO</p>
           <div class="text-container" id="dragon-health-txt">2000 / 2000 HP</div>
@@ -63,129 +68,6 @@
     </div>
   </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      let heroesArray = [
-        {
-          id: 0,
-          name: "PIPI",
-          maxHP: 400,
-          currentHP: 400,
-          damage: 100,
-          alive: true,
-        },
-        {
-          id: 1,
-          name: "LALA",
-          maxHP: 600,
-          currentHP: 600,
-          damage: 400,
-          alive: true,
-        },
-        {
-          id: 2,
-          name: "LOLO",
-          maxHP: 800,
-          currentHP: 800,
-          damage: 400,
-          alive: true,
-        },
-      ];
 
-      let dragonObject = {
-        name: "FOFO",
-        maxHP: 2000,
-        currentHP: 2000,
-        damage: 200,
-        alive: true,
-      };
-
-      function showAlert(attacker, target) {
-        alert(
-          `${attacker.name} har gjort ${attacker.damage} skade på ${target.name}!\n\n` +
-          `${target.name}'s nåværende helse: ${target.currentHP} / ${target.maxHP} HP`
-        );
-      }
-
-      function attackDragon(hero, containerId) {
-        if (dragonObject.alive) {
-          // Dragon's counterattack on the hero who attacked
-          const counterAttackTarget = hero;
-          counterAttackTarget.currentHP -= dragonObject.damage;
-          alert(`${dragonObject.name} har angrepet ${counterAttackTarget.name}!\n\n${counterAttackTarget.name}'s nåværende helse: ${counterAttackTarget.currentHP} / ${counterAttackTarget.maxHP} HP`);
-          
-          // Check if the hero who attacked is defeated
-          if (counterAttackTarget.currentHP <= 0) {
-            counterAttackTarget.currentHP = 0;
-            counterAttackTarget.alive = false;
-            document.getElementById(containerId).remove();
-            checkGameStatus();
-          }
-
-          // Check if the dragon is defeated after counterattack
-          if (dragonObject.currentHP <= 0) {
-            dragonObject.currentHP = 0;
-            dragonObject.alive = false;
-            document.getElementById(containerId).remove();
-            showGameResult(true); // true for game won
-          } else {
-            updateDragonHealthText();
-          }
-
-          // Hero's attack on the dragon
-          dragonObject.currentHP -= hero.damage;
-          if (dragonObject.currentHP <= 0) {
-            dragonObject.currentHP = 0;
-            dragonObject.alive = false;
-            document.getElementById(containerId).remove();
-            showGameResult(true); // true for game won
-          }
-          updateDragonHealthText();
-          showAlert(hero, dragonObject);
-        } else {
-          alert("Dragen er allerede beseiret!");
-        }
-      }
-
-      function updateDragonHealthText() {
-        const dragonHealthTxt = document.getElementById("dragon-health-txt");
-        dragonHealthTxt.textContent = `${dragonObject.currentHP} / ${dragonObject.maxHP} HP`;
-      }
-
-      function checkGameStatus() {
-        const allHeroesDead = heroesArray.every(hero => !hero.alive);
-        if (allHeroesDead && dragonObject.currentHP > 0) {
-          showGameResult(false); // false for game lost
-        }
-      }
-
-      function showGameResult(won) {
-        if (won) {
-          alert("Gratulerer, du har vunnet spillet! 🎉");
-        } else {
-          alert(`Spillet er tapt! ${dragonObject.name} har vunnet!`);
-        }
-        removeAllHeroes();
-      }
-
-      function removeAllHeroes() {
-        document.getElementById("healer-container").remove();
-        document.getElementById("archer-container").remove();
-        document.getElementById("warrior-container").remove();
-      }
-
-      document.getElementById("healer-img-container").addEventListener("click", function () {
-        attackDragon(heroesArray[0], "healer-container");
-      });
-
-      document.getElementById("archer-img-container").addEventListener("click", function () {
-        attackDragon(heroesArray[1], "archer-container");
-      });
-
-      document.getElementById("warrior-img-container").addEventListener("click", function () {
-        attackDragon(heroesArray[2], "warrior-container");
-      });
-    });
-  </script>
 </body>
 </html>
