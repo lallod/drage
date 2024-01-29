@@ -10,21 +10,21 @@
   <div class="main-container">
     <!-- Healthbars til heroene -->
     <div class="hero-health-containers">
-      <div class="healthbar-container">
+      <div class="healthbar-container" id="healer-container">
         <div class="healthbar healer-health"></div>
         <div class="text-container">
           <p id="healer-name-txt">PIPI</p>
           <p id="healer-health-txt">400 / 400 HP</p>
         </div>
       </div>
-      <div class="healthbar-container">
+      <div class="healthbar-container" id="archer-container">
         <div class="healthbar archer-health"></div>
         <div class="text-container">
           <p id="archer-name-txt">LALA</p>
           <p id="archer-health-txt">600 / 600 HP</p>
         </div>
       </div>
-      <div class="healthbar-container">
+      <div class="healthbar-container" id="warrior-container">
         <div class="healthbar warrior-health"></div>
         <div class="text-container">
           <p id="warrior-name-txt">LOLO</p>
@@ -107,7 +107,7 @@
         );
       }
 
-      function attackDragon(hero) {
+      function attackDragon(hero, containerId) {
         if (dragonObject.alive) {
           dragonObject.currentHP -= hero.damage;
           if (dragonObject.currentHP <= 0) {
@@ -124,6 +124,12 @@
             if (randomHero.alive) {
               randomHero.currentHP -= dragonObject.damage;
               alert(`${dragonObject.name} har angrepet ${randomHero.name}!\n\n${randomHero.name}'s nåværende helse: ${randomHero.currentHP} / ${randomHero.maxHP} HP`);
+              if (randomHero.currentHP <= 0) {
+                randomHero.currentHP = 0;
+                randomHero.alive = false;
+                document.getElementById(containerId).remove();
+                checkGameStatus();
+              }
             }
           }
         } else {
@@ -136,16 +142,30 @@
         dragonHealthTxt.textContent = `${dragonObject.currentHP} / ${dragonObject.maxHP} HP`;
       }
 
+      function checkGameStatus() {
+        const allHeroesDead = heroesArray.every(hero => !hero.alive);
+        if (allHeroesDead && dragonObject.currentHP > 0) {
+          alert(`Spillet er tapt! ${dragonObject.name} har vunnet!`);
+          removeAllHeroes();
+        }
+      }
+
+      function removeAllHeroes() {
+        document.getElementById("healer-container").remove();
+        document.getElementById("archer-container").remove();
+        document.getElementById("warrior-container").remove();
+      }
+
       document.getElementById("healer-img-container").addEventListener("click", function () {
-        attackDragon(heroesArray[0]);
+        attackDragon(heroesArray[0], "healer-container");
       });
 
       document.getElementById("archer-img-container").addEventListener("click", function () {
-        attackDragon(heroesArray[1]);
+        attackDragon(heroesArray[1], "archer-container");
       });
 
       document.getElementById("warrior-img-container").addEventListener("click", function () {
-        attackDragon(heroesArray[2]);
+        attackDragon(heroesArray[2], "warrior-container");
       });
     });
   </script>
