@@ -39,7 +39,7 @@
         <div class="healthbar dragon-health"></div>
         <div class="text-container">
           <p id="dragon-name-txt">FOFO</p>
-          <div class="text-container dragon-health-txt">2000 / 2000 HP</div>
+          <div class="text-container" id="dragon-health-txt">2000 / 2000 HP</div>
         </div>
       </div>
     </div>
@@ -56,7 +56,7 @@
     </div>
 
     <!-- Bildecontainer for fienden -->
-    <div class="enemy-container">
+    <div class="enemy-container" id="dragon-container">
       <div class="img-container dragon-container">
         <img class="dragon" src="assets/dragon.png" />
       </div>
@@ -109,45 +109,63 @@
 
       function attackDragon(hero, containerId) {
         if (dragonObject.alive) {
+          // Dragon's counterattack on the hero who attacked
+          const counterAttackTarget = hero;
+          counterAttackTarget.currentHP -= dragonObject.damage;
+          alert(`${dragonObject.name} har angrepet ${counterAttackTarget.name}!\n\n${counterAttackTarget.name}'s nåværende helse: ${counterAttackTarget.currentHP} / ${counterAttackTarget.maxHP} HP`);
+          
+          // Check if the hero who attacked is defeated
+          if (counterAttackTarget.currentHP <= 0) {
+            counterAttackTarget.currentHP = 0;
+            counterAttackTarget.alive = false;
+            document.getElementById(containerId).remove();
+            checkGameStatus();
+          }
+
+          // Check if the dragon is defeated after counterattack
+          if (dragonObject.currentHP <= 0) {
+            dragonObject.currentHP = 0;
+            dragonObject.alive = false;
+            document.getElementById(containerId).remove();
+            showGameResult(true); // true for game won
+          } else {
+            updateDragonHealthText();
+          }
+
+          // Hero's attack on the dragon
           dragonObject.currentHP -= hero.damage;
           if (dragonObject.currentHP <= 0) {
             dragonObject.currentHP = 0;
             dragonObject.alive = false;
+            document.getElementById(containerId).remove();
+            showGameResult(true); // true for game won
           }
           updateDragonHealthText();
           showAlert(hero, dragonObject);
-
-          // Dragon's counterattack on a random hero
-          if (Math.random() < 1 / 3) {
-            const randomHeroIndex = Math.floor(Math.random() * heroesArray.length);
-            const randomHero = heroesArray[randomHeroIndex];
-            if (randomHero.alive) {
-              randomHero.currentHP -= dragonObject.damage;
-              alert(`${dragonObject.name} har angrepet ${randomHero.name}!\n\n${randomHero.name}'s nåværende helse: ${randomHero.currentHP} / ${randomHero.maxHP} HP`);
-              if (randomHero.currentHP <= 0) {
-                randomHero.currentHP = 0;
-                randomHero.alive = false;
-                document.getElementById(containerId).remove();
-                checkGameStatus();
-              }
-            }
-          }
         } else {
           alert("Dragen er allerede beseiret!");
         }
       }
 
       function updateDragonHealthText() {
-        const dragonHealthTxt = document.querySelector(".dragon-health-txt");
+        const dragonHealthTxt = document.getElementById("dragon-health-txt");
         dragonHealthTxt.textContent = `${dragonObject.currentHP} / ${dragonObject.maxHP} HP`;
       }
 
       function checkGameStatus() {
         const allHeroesDead = heroesArray.every(hero => !hero.alive);
         if (allHeroesDead && dragonObject.currentHP > 0) {
-          alert(`Spillet er tapt! ${dragonObject.name} har vunnet!`);
-          removeAllHeroes();
+          showGameResult(false); // false for game lost
         }
+      }
+
+      function showGameResult(won) {
+        if (won) {
+          alert("Gratulerer, du har vunnet spillet! 🎉");
+        } else {
+          alert(`Spillet er tapt! ${dragonObject.name} har vunnet!`);
+        }
+        removeAllHeroes();
       }
 
       function removeAllHeroes() {
