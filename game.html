@@ -6,33 +6,29 @@
     <title>Arbeidskrav 1!</title>
     <link rel="stylesheet" href="game.css" />
   </head>
-  <!-- HTML KODEN TRENGER DU IKKE RØRE FOR Å LØSE OPPGAVENE. -->
 
   <body>
     <div class="main-container">
       <!-- Healthbars til heroene -->
       <div class="hero-health-containers">
         <div class="healthbar-container">
-          <!-- healer-health sin vidde må forandres for å endre lifebar -->
           <div class="healthbar healer-health"></div>
           <div class="text-container">
-            <p id="healer-name-txt">Healerens navn</p>
+            <p id="healer-name-txt">PIPI</p>
             <p id="healer-health-txt">400 / 400 HP</p>
           </div>
         </div>
         <div class="healthbar-container">
-          <!-- archer-health sin vidde må forandres for å endre lifebar -->
           <div class="healthbar archer-health"></div>
           <div class="text-container">
-            <p id="archer-name-txt">Archerens navn</p>
+            <p id="archer-name-txt">LALA</p>
             <p id="archer-health-txt">600 / 600 HP</p>
           </div>
         </div>
         <div class="healthbar-container">
-          <!-- warrior-health sin vidde må forandres for å endre lifebar -->
           <div class="healthbar warrior-health"></div>
           <div class="text-container">
-            <p id="warrior-name-txt">Warriorens navn</p>
+            <p id="warrior-name-txt">LOLO</p>
             <p id="warrior-health-txt">800 / 800 HP</p>
           </div>
         </div>
@@ -41,23 +37,22 @@
       <!-- Healthbar til fienden -->
       <div class="dragon-health-container">
         <div class="healthbar-container">
-          <!-- dragon-health sin vidde må forandres for å endre lifebar -->
           <div class="healthbar dragon-health"></div>
           <div class="text-container">
-            <p id="dragon-name-txt">Dragens navn</p>
+            <p id="dragon-name-txt">FOFO</p>
             <div class="text-container dragon-health-txt">2000 / 2000 HP</div>
           </div>
         </div>
       </div>
 
       <!-- Bildecontainere for heroene -->
-      <div class="img-container healer">
+      <div class="img-container healer" id="healer-img-container">
         <img class="hero" src="assets/healer.png" />
       </div>
-      <div class="img-container archer">
+      <div class="img-container archer" id="archer-img-container">
         <img class="hero" src="assets/archer.png" />
       </div>
-      <div class="img-container warrior">
+      <div class="img-container warrior" id="warrior-img-container">
         <img class="hero" src="assets/warrior.png" />
       </div>
 
@@ -68,44 +63,82 @@
         </div>
       </div>
     </div>
+
     <script>
-      //Denne JS-koden er laget klar for deg. Den trenger du ikke endre på.
+      document.addEventListener("DOMContentLoaded", function () {
+        let heroesArray = [
+          {
+            id: 0,
+            name: "PIPI",
+            maxHP: 400,
+            currentHP: 400,
+            damage: 100,
+            alive: true,
+          },
+          {
+            id: 1,
+            name: "LALA",
+            maxHP: 600,
+            currentHP: 600,
+            damage: 400,
+            alive: true,
+          },
+          {
+            id: 2,
+            name: "LOLO",
+            maxHP: 800,
+            currentHP: 800,
+            damage: 400,
+            alive: true,
+          },
+        ];
 
-      //Stats for heroes
-      let heroesArray = [
-        {
-          id: 0,
-          name: "Henriette Healer",
-          maxHP: 400,
-          currentHP: 400,
-          damage: 100,
+        let dragonObject = {
+          name: "FOFO",
+          maxHP: 2000,
+          currentHP: 2000,
+          damage: 200,
           alive: true,
-        },
-        {
-          id: 1,
-          name: "Ariana archer",
-          maxHP: 500,
-          currentHP: 500,
-          damage: 400,
-          alive: true,
-        },
-        {
-          id: 2,
-          name: "Wyona Warrior",
-          maxHP: 600,
-          currentHP: 600,
-          damage: 400,
-          alive: true,
-        },
-      ];
+        };
 
-      let dragonObject = {
-        name: "Daar Dragon",
-        maxHP: 2000,
-        currentHP: 2000,
-        damage: 200,
-        alive: true,
-      };
+        function showAlert(attacker, target) {
+          alert(
+            `${attacker.name} har gjort ${attacker.damage} skade på ${target.name}!\n\n` +
+            `${target.name}'s nåværende helse: ${target.currentHP} / ${target.maxHP} HP`
+          );
+        }
+
+        function attackDragon(hero) {
+          if (dragonObject.alive) {
+            dragonObject.currentHP -= hero.damage;
+            if (dragonObject.currentHP <= 0) {
+              dragonObject.currentHP = 0;
+              dragonObject.alive = false;
+            }
+            updateDragonHealthText();
+            showAlert(hero, dragonObject);
+          } else {
+            alert("Dragen er allerede beseiret!");
+          }
+        }
+
+        function updateDragonHealthText() {
+          const dragonHealthTxt = document.querySelector(".dragon-health-txt");
+          dragonHealthTxt.textContent = `${dragonObject.currentHP} / ${dragonObject.maxHP} HP`;
+        }
+
+        document.getElementById("healer-img-container").addEventListener("click", function () {
+          attackDragon(heroesArray[0]);
+        });
+
+        document.getElementById("archer-img-container").addEventListener("click", function () {
+          attackDragon(heroesArray[1]);
+        });
+
+        document.getElementById("warrior-img-container").addEventListener("click", function () {
+          attackDragon(heroesArray[2]);
+        });
+      });
     </script>
   </body>
 </html>
